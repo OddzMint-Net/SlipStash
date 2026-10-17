@@ -1,0 +1,19 @@
+@"
+# Gradle
+.gradle/
+build/
+/captures
+
+# IDE
+.idea/
+*.iml
+
+# Local config and secrets
+local.properties
+*.jks
+*.keystore
+
+# OS
+.DS_Store
+Thumbs.db
+"@ | Out-File -Encoding utf8 .gitignore
