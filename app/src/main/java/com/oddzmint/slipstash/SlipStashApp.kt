@@ -1,7 +1,6 @@
 package com.oddzmint.slipstash
 
 import android.app.Application
-import com.oddzmint.slipstash.di.AppContainer
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
