@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.oddzmint.slipstash.presentation.SlipStashNavHost
 import com.oddzmint.slipstash.presentation.list.ExpenseListScreen
 import com.oddzmint.slipstash.ui.theme.SlipStashTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,8 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SlipStashTheme {
-            }
+            SlipStashNavHost()
         }
     }
 }
