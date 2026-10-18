@@ -75,5 +75,6 @@ dependencies {
     androidTestImplementation("androidx.room:room-testing:2.7.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    implementation("androidx.navigation:navigation-compose:2.8.9")
 
 }

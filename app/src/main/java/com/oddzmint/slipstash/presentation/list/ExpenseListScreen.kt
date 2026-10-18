@@ -40,27 +40,29 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun ExpenseListScreen(viewModel: ExpenseListViewModel = hiltViewModel()) {
+fun ExpenseListScreen(
+    onAddClick: () -> Unit,
+    viewModel: ExpenseListViewModel = hiltViewModel()
+) {
     val expenses by viewModel.expenses.collectAsState()
     ExpenseListContent(
         expenses = expenses,
-        onAddSample = viewModel::addSampleExpense
-    )
+        onAddClick = onAddClick)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpenseListContent(
     expenses: List<Expense>,
-    onAddSample: () -> Unit,
+    onAddClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
         topBar = { TopAppBar(title = { Text("Expenses") }) },
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddSample) {
-                Icon(Icons.Default.Add, contentDescription = "Add sample expense")
+            FloatingActionButton(onClick = onAddClick) {
+                Icon(Icons.Default.Add, contentDescription = "Add expense")
             }
         }
     ) { padding ->
@@ -186,7 +188,7 @@ private fun ExpenseListPreview() {
                     syncStatus = SyncStatus.FAILED
                 )
             ),
-            onAddSample = {}
+            onAddClick = {}
         )
     }
 }
@@ -194,5 +196,5 @@ private fun ExpenseListPreview() {
 @Preview(showBackground = true, name = "Empty")
 @Composable
 private fun ExpenseListEmptyPreview() {
-    MaterialTheme { ExpenseListContent(expenses = emptyList(), onAddSample = {}) }
+    MaterialTheme { ExpenseListContent(expenses = emptyList(), onAddClick = {}) }
 }
