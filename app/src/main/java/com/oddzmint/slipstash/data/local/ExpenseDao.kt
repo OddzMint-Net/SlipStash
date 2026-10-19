@@ -23,4 +23,7 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM expenses WHERE syncStatus IN (:statuses)")
     suspend fun getByStatuses(statuses: List<SyncStatus>): List<ExpenseEntity>
+
+    @Query("UPDATE expenses SET receiptRemoteUrl = :url WHERE id = :id")
+    suspend fun updateReceiptRemoteUrl(id: String, url: String?)
 }

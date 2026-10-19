@@ -17,5 +17,4 @@ class ExpenseListViewModel @Inject constructor(
 
     val expenses: StateFlow<List<Expense>> = observeExpenses()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-
 }
