@@ -3,9 +3,11 @@ package com.oddzmint.slipstash.data.work
 import android.content.Context
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.oddzmint.slipstash.domain.repository.SyncScheduler
@@ -17,11 +19,12 @@ class WorkManagerSyncScheduler @Inject constructor(
     @ApplicationContext private val context: Context
 ) : SyncScheduler {
 
+    private val needsNetwork = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
+
     override fun schedule(expenseId: String, hasReceipt: Boolean) {
         val idData = workDataOf(SyncExpenseWorker.KEY_EXPENSE_ID to expenseId)
-        val needsNetwork = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
 
         val sync = OneTimeWorkRequestBuilder<SyncExpenseWorker>()
             .setInputData(idData)
@@ -51,5 +54,17 @@ class WorkManagerSyncScheduler @Inject constructor(
             .then(upload)
             .then(sync)
             .enqueue()
+    }
+
+    override fun schedulePeriodicRetry() {
+        val request = PeriodicWorkRequestBuilder<RetrySyncWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(needsNetwork)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "retry_sweep",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
     }
 }
