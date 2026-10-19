@@ -1,21 +1,23 @@
 package com.oddzmint.slipstash.presentation.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,9 +27,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,6 +41,7 @@ import com.oddzmint.slipstash.domain.model.Category
 import com.oddzmint.slipstash.domain.model.Expense
 import com.oddzmint.slipstash.domain.model.SyncStatus
 import java.time.Instant
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -45,9 +52,7 @@ fun ExpenseListScreen(
     viewModel: ExpenseListViewModel = hiltViewModel()
 ) {
     val expenses by viewModel.expenses.collectAsState()
-    ExpenseListContent(
-        expenses = expenses,
-        onAddClick = onAddClick)
+    ExpenseListContent(expenses = expenses, onAddClick = onAddClick)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,6 +62,9 @@ fun ExpenseListContent(
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val (monthTotal, monthCount) = remember(expenses) { monthSummary(expenses) }
+    val waiting = remember(expenses) { expenses.count { it.syncStatus != SyncStatus.SYNCED } }
+
     Scaffold(
         modifier = modifier,
         topBar = { TopAppBar(title = { Text("Expenses") }) },
@@ -66,26 +74,25 @@ fun ExpenseListContent(
             }
         }
     ) { padding ->
-        if (expenses.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No expenses yet. Tap + to add one.",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+        LazyColumn(
+            modifier = Modifier.padding(padding),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 88.dp)
+        ) {
+            item {
+                SummaryHeader(total = monthTotal, count = monthCount, waiting = waiting)
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier.padding(padding),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            if (expenses.isEmpty()) {
+                item {
+                    Text(
+                        text = "No expenses yet. Tap + to add one.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = 32.dp)
+                    )
+                }
+            } else {
                 items(expenses, key = { it.id }) { expense ->
                     ExpenseRow(expense)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
             }
         }
@@ -93,35 +100,75 @@ fun ExpenseListContent(
 }
 
 @Composable
+private fun SummaryHeader(total: Long, count: Int, waiting: Int) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = "This month",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = formatAmount(total),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Medium
+            )
+            val waitingText = if (waiting == 0) "all synced" else "$waiting waiting to sync"
+            Text(
+                text = "$count expenses · $waitingText",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
 private fun ExpenseRow(expense: Expense) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Row(
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = expense.category.label(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = formatDate(expense.dateMillis),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                .size(10.dp)
+                .clip(CircleShape)
+                .background(expense.category.color())
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = expense.category.label(),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+            val subtitle = buildString {
+                append(formatDate(expense.dateMillis))
+                if (expense.note.isNotBlank()) append(" · ${expense.note}")
             }
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = formatAmount(expense.amountCents),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                StatusBadge(expense.syncStatus)
-            }
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = formatAmount(expense.amountCents),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+            StatusBadge(expense.syncStatus)
         }
     }
 }
@@ -145,6 +192,15 @@ private fun StatusBadge(status: SyncStatus) {
     }
 }
 
+private fun Category.color(): Color = when (this) {
+    Category.GROCERIES -> Color(0xFF378ADD)
+    Category.BILLS -> Color(0xFF1D9E75)
+    Category.TRANSPORT -> Color(0xFFD85A30)
+    Category.EATING_OUT -> Color(0xFFDD77A0)
+    Category.ENTERTAINMENT ->Color(0xFFDE20B0)
+    Category.OTHER -> Color(0xFFEED20E)
+}
+
 private fun Category.label(): String =
     name.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
 
@@ -156,6 +212,15 @@ private fun formatDate(millis: Long): String =
         .atZone(ZoneId.systemDefault())
         .format(DateTimeFormatter.ofPattern("d MMM yyyy", Locale.getDefault()))
 
+private fun monthSummary(expenses: List<Expense>): Pair<Long, Int> {
+    val zone = ZoneId.systemDefault()
+    val current = YearMonth.now(zone)
+    val thisMonth = expenses.filter {
+        YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(zone)) == current
+    }
+    return thisMonth.sumOf { it.amountCents } to thisMonth.size
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun ExpenseListPreview() {
@@ -163,30 +228,10 @@ private fun ExpenseListPreview() {
     MaterialTheme {
         ExpenseListContent(
             expenses = listOf(
-                Expense(
-                    amountCents = 61_200,
-                    category = Category.GROCERIES,
-                    dateMillis = now,
-                    syncStatus = SyncStatus.PENDING
-                ),
-                Expense(
-                    amountCents = 90_000,
-                    category = Category.TRANSPORT,
-                    dateMillis = now,
-                    syncStatus = SyncStatus.SYNCING
-                ),
-                Expense(
-                    amountCents = 79_900,
-                    category = Category.BILLS,
-                    dateMillis = now,
-                    syncStatus = SyncStatus.SYNCED
-                ),
-                Expense(
-                    amountCents = 9_500,
-                    category = Category.EATING_OUT,
-                    dateMillis = now,
-                    syncStatus = SyncStatus.FAILED
-                )
+                Expense(amountCents = 61_200, category = Category.GROCERIES, note = "Weekly shop", dateMillis = now, syncStatus = SyncStatus.PENDING),
+                Expense(amountCents = 90_000, category = Category.TRANSPORT, dateMillis = now, syncStatus = SyncStatus.SYNCING),
+                Expense(amountCents = 79_900, category = Category.BILLS, note = "Internet", dateMillis = now, syncStatus = SyncStatus.SYNCED),
+                Expense(amountCents = 9_500, category = Category.EATING_OUT, dateMillis = now, syncStatus = SyncStatus.FAILED)
             ),
             onAddClick = {}
         )

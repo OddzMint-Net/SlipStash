@@ -35,5 +35,4 @@ class FakeExpenseRepository : ExpenseRepository {
             list.map { if (it.id == id) it.copy(receiptRemoteUrl = url) else it }
         }
     }
-
 }
