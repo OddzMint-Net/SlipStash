@@ -2,7 +2,7 @@ package com.oddzmint.slipstash.presentation.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.oddzmint.slipstash.domain.model.AddExpenseUiState
+import com.oddzmint.slipstash.presentation.model.AddExpenseUiState
 import com.oddzmint.slipstash.domain.model.Category
 import com.oddzmint.slipstash.domain.usecases.AddExpenseUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +31,10 @@ class AddExpenseViewModel @Inject constructor(
 
     fun onNoteChange(value: String) = _state.update { it.copy(note = value.take(100)) }
 
+    fun onReceiptCaptured(path: String) = _state.update { it.copy(receiptPath = path) }
+
+    fun onReceiptRemoved() = _state.update { it.copy(receiptPath = null) }
+
     fun onSave() {
         val current = _state.value
         val cents = parseCents(current.amountText)
@@ -49,8 +53,8 @@ class AddExpenseViewModel @Inject constructor(
         }
     }
 
-    private fun parseCents(text:String):Long? =
-        text.replace(',','.')
+    private fun parseCents(text: String): Long? =
+        text.replace(',', '.')
             .toBigDecimalOrNull()
             ?.movePointRight(2)
             ?.toLong()
