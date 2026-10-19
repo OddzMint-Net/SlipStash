@@ -31,4 +31,8 @@ class ExpenseRepositoryImpl @Inject constructor(
         dao.getByStatuses(listOf(SyncStatus.PENDING, SyncStatus.FAILED))
             .map { it.toDomain() }
 
+    override suspend fun updateReceiptRemoteUrl(id: String, url: String?) =
+        dao.updateReceiptRemoteUrl(id, url)
+
+
 }

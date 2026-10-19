@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "549517439756",
+    "project_id": "slipstash-46829",
+    "storage_bucket": "slipstash-46829.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549517439756:android:c1068ce2adf9b241a10f29",
+        "android_client_info": {
+          "package_name": "com.oddzmint.slipstash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHgbqVsStiM2heuQtvi_MPFA4MyBS4gd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
