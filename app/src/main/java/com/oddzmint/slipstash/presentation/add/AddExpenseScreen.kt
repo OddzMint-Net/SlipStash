@@ -4,48 +4,32 @@ import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -55,7 +39,7 @@ import com.oddzmint.slipstash.presentation.model.AddExpenseUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.UUID
+import java.util.*
 
 @Composable
 fun AddExpenseScreen(
@@ -139,82 +123,175 @@ fun AddExpenseContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            OutlinedTextField(
-                value = state.amountText,
-                onValueChange = onAmountChange,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Amount") },
-                prefix = { Text("R ") },
-                singleLine = true,
-                isError = state.error != null,
-                supportingText = state.error?.let { { Text(it) } },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            ReceiptArea(
+                path = state.receiptPath,
+                onTakePhoto = onTakePhoto,
+                onRemovePhoto = onRemovePhoto
             )
 
-            Text("Category", style = MaterialTheme.typography.labelLarge)
-            Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Category.entries.forEach { category ->
-                    FilterChip(
-                        selected = state.category == category,
-                        onClick = { onCategoryChange(category) },
-                        label = {
-                            Text(
-                                category.name.lowercase().replace('_', ' ')
-                                    .replaceFirstChar { it.uppercase() }
-                            )
-                        }
-                    )
-                }
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                FieldLabel("Amount")
+                OutlinedTextField(
+                    value = state.amountText,
+                    onValueChange = onAmountChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    prefix = { Text("R ") },
+                    placeholder = { Text("0.00") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    isError = state.error != null,
+                    supportingText = state.error?.let { { Text(it) } },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                )
             }
 
-            OutlinedTextField(
-                value = state.note,
-                onValueChange = onNoteChange,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Note (optional)") },
-                singleLine = true
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                FieldLabel("Category")
+                CategoryDropdown(selected = state.category, onSelect = onCategoryChange)
+            }
 
-            Text("Receipt", style = MaterialTheme.typography.labelLarge)
-            if (state.receiptPath == null) {
-                OutlinedButton(onClick = onTakePhoto, modifier = Modifier.fillMaxWidth()) {
-                    Text("Take receipt photo")
-                }
-            } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    ReceiptThumbnail(path = state.receiptPath)
-                    Column {
-                        TextButton(onClick = onTakePhoto) { Text("Retake") }
-                        TextButton(onClick = onRemovePhoto) { Text("Remove") }
-                    }
-                }
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                FieldLabel("Note (optional)")
+                OutlinedTextField(
+                    value = state.note,
+                    onValueChange = onNoteChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp)
+                )
             }
 
             Button(
                 onClick = onSave,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 52.dp)
+                    .heightIn(min = 52.dp),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Save")
+            }
+
+            Text(
+                text = "Saved on device first, synced later",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+private fun FieldLabel(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+@Composable
+private fun ReceiptArea(
+    path: String?,
+    onTakePhoto: () -> Unit,
+    onRemovePhoto: () -> Unit
+
+) {
+    val outline = MaterialTheme.colorScheme.outline
+    val shape = RoundedCornerShape(12.dp)
+
+    if (path == null) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .clip(shape)
+                .clickable(onClick = onTakePhoto)
+                .drawBehind {
+                    drawRoundRect(
+                        color = outline,
+                        cornerRadius = CornerRadius(12.dp.toPx()),
+                        style = Stroke(
+                            width = 1.dp.toPx(),
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(16f, 12f))
+                        )
+                    )
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("Attach receipt", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = "Tap to take a photo",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    } else {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            ReceiptPreview(
+                path = path,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(shape)
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(onClick = onTakePhoto) { Text("Retake") }
+                TextButton(onClick = onRemovePhoto) { Text("Remove") }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CategoryDropdown(
+    selected: Category,
+    onSelect: (Category) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it }
+    ) {
+        OutlinedTextField(
+            value = selected.label(),
+            onValueChange = {},
+            readOnly = true,
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            Category.entries.forEach { category ->
+                DropdownMenuItem(
+                    text = { Text(category.label()) },
+                    onClick = {
+                        onSelect(category)
+                        expanded = false
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ReceiptThumbnail(path: String, modifier: Modifier = Modifier) {
+private fun ReceiptPreview(path: String, modifier: Modifier = Modifier) {
     val bitmap by produceState<ImageBitmap?>(initialValue = null, key1 = path) {
         value = withContext(Dispatchers.IO) {
             BitmapFactory.decodeFile(
                 path,
-                BitmapFactory.Options().apply { inSampleSize = 4 }
+                BitmapFactory.Options().apply { inSampleSize = 2 }
             )?.asImageBitmap()
         }
     }
@@ -224,18 +301,19 @@ private fun ReceiptThumbnail(path: String, modifier: Modifier = Modifier) {
             contentDescription = "Receipt photo",
             contentScale = ContentScale.Crop,
             modifier = modifier
-                .size(96.dp)
-                .clip(RoundedCornerShape(12.dp))
         )
     }
 }
+
+private fun Category.label(): String =
+    name.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
 
 @Preview(showBackground = true)
 @Composable
 private fun AddExpensePreview() {
     MaterialTheme {
         AddExpenseContent(
-            state = AddExpenseUiState(amountText = "612.50"),
+            state = AddExpenseUiState(amountText = "612.00"),
             onAmountChange = {}, onCategoryChange = {}, onNoteChange = {},
             onTakePhoto = {}, onRemovePhoto = {}, onSave = {}, onBack = {}
         )
