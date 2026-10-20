@@ -36,6 +36,7 @@ import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.oddzmint.slipstash.domain.model.Category
 import com.oddzmint.slipstash.presentation.model.AddExpenseUiState
+import com.oddzmint.slipstash.ui.theme.SlipStashTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -107,13 +108,7 @@ fun AddExpenseContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Add expense") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+                title = { Text("Add expense") },)
         }
     ) { padding ->
         Column(
@@ -311,7 +306,7 @@ private fun Category.label(): String =
 @Preview(showBackground = true)
 @Composable
 private fun AddExpensePreview() {
-    MaterialTheme {
+    SlipStashTheme {
         AddExpenseContent(
             state = AddExpenseUiState(amountText = "612.00"),
             onAmountChange = {}, onCategoryChange = {}, onNoteChange = {},
@@ -323,7 +318,7 @@ private fun AddExpensePreview() {
 @Preview(showBackground = true, name = "Error")
 @Composable
 private fun AddExpenseErrorPreview() {
-    MaterialTheme {
+    SlipStashTheme {
         AddExpenseContent(
             state = AddExpenseUiState(error = "Enter an amount"),
             onAmountChange = {}, onCategoryChange = {}, onNoteChange = {},
