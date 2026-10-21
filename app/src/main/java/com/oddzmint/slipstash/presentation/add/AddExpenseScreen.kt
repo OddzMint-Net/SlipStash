@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.oddzmint.slipstash.domain.model.Category
+import com.oddzmint.slipstash.presentation.components.PrimaryActionButton
 import com.oddzmint.slipstash.presentation.model.AddExpenseUiState
 import com.oddzmint.slipstash.ui.theme.SlipStashTheme
 import kotlinx.coroutines.Dispatchers
@@ -105,7 +106,8 @@ fun AddExpenseContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Add expense") },)
+                title = { Text("Add expense") },
+            )
         }
     ) { padding ->
         Column(
@@ -153,15 +155,10 @@ fun AddExpenseContent(
                 )
             }
 
-            Button(
-                onClick = onSave,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 52.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("Save")
-            }
+            PrimaryActionButton(
+                text = "Save",
+                onClick = onSave
+            )
 
             Text(
                 text = "Saved on device first, synced later",
