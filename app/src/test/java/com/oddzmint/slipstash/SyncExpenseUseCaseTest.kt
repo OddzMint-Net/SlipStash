@@ -8,7 +8,9 @@ import com.oddzmint.slipstash.fakes.FakeAuthRepository
 import com.oddzmint.slipstash.fakes.FakeExpenseRemoteRepository
 import com.oddzmint.slipstash.fakes.FakeExpenseRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -90,5 +92,17 @@ class SyncExpenseUseCaseTest {
         }
         assertTrue(rethrown)
         assertEquals(SyncStatus.SYNCING, statusOf(expense.id))
+    }
+
+    @Test
+    fun `timeout during upload is recorded as FAILED and not rethrown`() = runTest {
+        repository.saveExpense(expense)
+        remote.onUpload = { withTimeout(50) { awaitCancellation() } }
+
+        val result = useCase()(expense.id)
+
+        assertTrue(result.isFailure)
+        assertEquals(SyncStatus.FAILED,statusOf(expense.id))
+
     }
 }

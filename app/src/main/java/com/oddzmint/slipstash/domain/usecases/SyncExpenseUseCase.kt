@@ -5,6 +5,7 @@ import com.oddzmint.slipstash.domain.repository.AuthRepository
 import com.oddzmint.slipstash.domain.repository.ExpenseRemoteRepository
 import com.oddzmint.slipstash.domain.repository.ExpenseRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.TimeoutCancellationException
 import javax.inject.Inject
 
 class SyncExpenseUseCase @Inject constructor(
@@ -21,7 +22,7 @@ class SyncExpenseUseCase @Inject constructor(
         }.onSuccess {
             repository.updateSyncStatus(id, SyncStatus.SYNCED)
         }.onFailure { error ->
-            if (error is CancellationException) throw error
+            if (error is CancellationException && error !is TimeoutCancellationException) throw error
             repository.updateSyncStatus(id, SyncStatus.FAILED)
         }
     }
