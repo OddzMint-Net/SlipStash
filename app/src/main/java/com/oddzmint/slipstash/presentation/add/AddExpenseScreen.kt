@@ -1,5 +1,6 @@
 package com.oddzmint.slipstash.presentation.add
 
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,13 +11,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -309,6 +306,18 @@ private fun AddExpensePreview() {
     SlipStashTheme {
         AddExpenseContent(
             state = AddExpenseUiState(amountText = "612.00"),
+            onAmountChange = {}, onCategoryChange = {}, onNoteChange = {},
+            onTakePhoto = {}, onRemovePhoto = {}, onSave = {}, onBack = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AddExpenseDarkThemePreview() {
+    SlipStashTheme {
+        AddExpenseContent(
+            state = AddExpenseUiState(amountText = "720.00"),
             onAmountChange = {}, onCategoryChange = {}, onNoteChange = {},
             onTakePhoto = {}, onRemovePhoto = {}, onSave = {}, onBack = {}
         )
