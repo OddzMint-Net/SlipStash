@@ -11,6 +11,7 @@ import com.oddzmint.slipstash.domain.repository.ReceiptStorage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.TimeoutCancellationException
 import java.io.File
 
 @HiltWorker
@@ -37,7 +38,7 @@ class UploadReceiptWorker @AssistedInject constructor(
         }.fold(
             onSuccess = { Result.success() },
             onFailure = { error ->
-                if (error is CancellationException) throw error
+                if (error is CancellationException && error !is TimeoutCancellationException) throw error
                 if (runAttemptCount < MAX_ATTEMPTS) {
                     Result.retry()
                 } else {
