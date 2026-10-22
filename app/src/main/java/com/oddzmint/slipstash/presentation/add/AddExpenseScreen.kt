@@ -149,8 +149,6 @@ fun AddExpenseContent(
     }
 }
 
-private fun Category.label(): String =
-    name.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
 
 @Preview(showBackground = true)
 @Composable

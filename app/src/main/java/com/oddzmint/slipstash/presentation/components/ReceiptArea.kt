@@ -1,5 +1,6 @@
 package com.oddzmint.slipstash.presentation.components
 
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -21,7 +22,9 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oddzmint.slipstash.ui.theme.SlipStashTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -96,6 +99,30 @@ fun ReceiptPreview(path: String, modifier: Modifier = Modifier) {
             contentDescription = "Receipt photo",
             contentScale = ContentScale.Crop,
             modifier = modifier
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ReceiptAreaPreview() {
+    SlipStashTheme {
+        ReceiptArea(
+            path = "",
+            onTakePhoto = {},
+            onRemovePhoto = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ReceiptAreaDarkPreview() {
+    SlipStashTheme {
+        ReceiptArea(
+            path = "",
+            onTakePhoto = {},
+            onRemovePhoto = {}
         )
     }
 }
