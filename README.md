@@ -14,7 +14,7 @@ The project is built to demonstrate offline-first design, background work with W
 
 | Dark theme | Queued while offline                              | Synced in Firestore                              |
 |---|---------------------------------------------------|--------------------------------------------------|
-| ![Dark theme](screenshots/expenses_dark.png) | ![Queued offline](screenshots/queued_offline.jpg) | ![Firestore](screenshots/synced.jpg) |
+| ![Dark theme](screenshots/dark_theme.png) | ![Queued offline](screenshots/queued_offline.jpg) | ![Firestore](screenshots/synced.jpg) |
 
 ---
 
