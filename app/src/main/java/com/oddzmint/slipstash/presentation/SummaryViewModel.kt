@@ -59,5 +59,4 @@ class SummaryViewModel @Inject constructor(
             YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(zone))
         }
     }
-
 }
