@@ -20,9 +20,9 @@ import com.oddzmint.slipstash.presentation.add.AddExpenseScreen
 import com.oddzmint.slipstash.presentation.list.ExpenseListScreen
 import com.oddzmint.slipstash.presentation.summary.SummaryScreen
 
-private const val ROUTE_LIST = "list"
-private const val ROUTE_ADD = "add"
-private const val ROUTE_SUMMARY = "summary"
+internal const val ROUTE_LIST = "list"
+internal const val ROUTE_ADD = "add"
+internal const val ROUTE_SUMMARY = "summary"
 
 private data class Tab(val route: String, val label: String)
 
