@@ -8,13 +8,13 @@ The project is built to demonstrate offline-first design, background work with W
 
 ## 📱 Screenshots
 
-| Expenses | Add expense | Receipt attached                                      |
+| Expenses Summary | Add expense | Receipt attached                      |
 |---|---|-------------------------------------------------------|
-| ![Expenses](screenshots/expenses.png) | ![Add expense](screenshots/add_expense.png) | ![Receipt attached](screenshots/receipt_attached.jpg) |
+| ![Expenses](screenshots/summary.jpg) | ![Add expense](screenshots/add_expense.png) | ![Receipt attached](screenshots/receipt_attached.jpg) |
 
 | Dark theme | Queued while offline                              | Synced in Firestore                              |
 |---|---------------------------------------------------|--------------------------------------------------|
-| ![Dark theme](screenshots/expenses_dark.png) | ![Queued offline](screenshots/queued_offline.jpg) | ![Firestore](screenshots/firestore_console.jpeg) |
+| ![Dark theme](screenshots/expenses_dark.png) | ![Queued offline](screenshots/queued_offline.jpg) | ![Firestore](screenshots/synced.jpg) |
 
 ---
 
