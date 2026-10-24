@@ -91,5 +91,6 @@ dependencies {
     ksp("androidx.hilt:hilt-compiler:1.2.0")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
 }
