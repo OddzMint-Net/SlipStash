@@ -10,6 +10,7 @@ data class Expense(
     val receiptLocalPath: String? = null,
     val receiptRemoteUrl: String? = null,
     val dateMillis: Long,
-    val syncStatus: SyncStatus = SyncStatus.PENDING
-
+    val syncStatus: SyncStatus = SyncStatus.PENDING,
+    val isDeleted: Boolean,
+    val updatedAtMillis: Long = System.currentTimeMillis()
 )
