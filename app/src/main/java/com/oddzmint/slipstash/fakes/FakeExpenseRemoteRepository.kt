@@ -9,11 +9,12 @@ class FakeExpenseRemoteRepository : ExpenseRemoteRepository {
 
     val uploads = mutableListOf<Upload>()
 
-    /** Runs at the moment of upload; the tests use it to inspect state or to throw. */
-
+    val documents = mutableMapOf<String, Expense>()
     var onUpload: suspend () -> Unit = {}
+
     override suspend fun upload(userId: String, expense: Expense) {
         onUpload()
         uploads += Upload(userId, expense)
+        documents["$userId/${expense.id}"] = expense
     }
 }
