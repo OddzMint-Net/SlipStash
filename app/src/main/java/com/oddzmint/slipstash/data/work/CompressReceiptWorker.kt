@@ -21,6 +21,7 @@ class CompressReceiptWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val id = inputData.getString(SyncExpenseWorker.KEY_EXPENSE_ID) ?: return Result.failure()
         val expense = repository.getExpense(id) ?: return Result.failure()
+        if (expense.receiptRemoteUrl != null) return Result.success() //already uploaded: nothing to compress
         val source = expense.receiptLocalPath ?: return Result.success()   // no photo: skip
 
         val target = File(applicationContext.filesDir, "receipts_compressed/$id.jpg")

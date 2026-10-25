@@ -25,6 +25,8 @@ class UploadReceiptWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val id = inputData.getString(SyncExpenseWorker.KEY_EXPENSE_ID) ?: return Result.failure()
+        val expense = repository.getExpense(id) ?: return Result.success()
+        if (expense.receiptRemoteUrl != null) return Result.success()
         val path = inputData.getString(CompressReceiptWorker.KEY_COMPRESSED_PATH)
             ?: return Result.success()   // nothing to upload
         val file = File(path)

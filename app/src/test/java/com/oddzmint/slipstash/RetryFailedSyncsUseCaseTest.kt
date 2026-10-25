@@ -51,16 +51,6 @@ class RetryFailedSyncsUseCaseTest {
     }
 
     @Test
-    fun `synced and in-progress expenses are left alone`() = runTest {
-        repository.saveExpense(expense(SyncStatus.SYNCED))
-        repository.saveExpense(expense(SyncStatus.SYNCING))
-
-        retryFailedSyncs()
-
-        assertTrue(scheduler.calls.isEmpty())
-    }
-
-    @Test
     fun `receipt chain is requested only when the photo has not been uploaded`() = runTest {
         val needsUpload = expense(SyncStatus.FAILED, localPath = "/files/a/jpeg")
         val alreadyUploaded = expense(
@@ -83,5 +73,22 @@ class RetryFailedSyncsUseCaseTest {
         repository.saveExpense(expense(SyncStatus.SYNCED))
 
         assertEquals(2, retryFailedSyncs())
+    }
+
+    @Test
+    fun `synced expense are left alone`() = runTest {
+        repository.saveExpense(expense(SyncStatus.SYNCED))
+        retryFailedSyncs()
+        assertTrue(scheduler.calls.isEmpty())
+    }
+
+    @Test
+    fun `interrupted SYNCING are re-queued`() = runTest {
+        val stuck = expense(SyncStatus.SYNCING)
+        repository.saveExpense(stuck)
+        retryFailedSyncs()
+        assertEquals(listOf(stuck.id), scheduler.calls.map { it.expenseId })
+
+
     }
 }
