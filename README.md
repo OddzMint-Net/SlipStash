@@ -70,10 +70,11 @@ Save expense
                  PENDING → SYNCING → SYNCED   (or FAILED)
 
 Every ~15 minutes (while online)
-  └─► Retry sweep: re-queue anything still PENDING or FAILED
+  └─► Retry sweep: re-queue anything still PENDING, SYNCING or FAILED
 ```
 
 - **No duplicate jobs.** Each expense's work is unique, and enqueued with `KEEP`, so saving or sweeping can never queue the same expense twice.
+- **Unique work stops duplicates.**
 - **Retries.** Workers retry up to five times with exponential backoff, then mark the expense *Retry*. The periodic sweep picks it up later.
 - **Cancellation is not failure.** If the system stops a job, the use case re-throws the cancellation and does not record a failure.
 

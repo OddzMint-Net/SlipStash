@@ -27,7 +27,7 @@ class FakeExpenseRepository : ExpenseRepository {
     }
 
     override suspend fun getUnsyncedExpense(): List<Expense> = items.value.filter {
-        it.syncStatus == SyncStatus.PENDING || it.syncStatus == SyncStatus.FAILED
+        it.syncStatus != SyncStatus.SYNCED
     }
 
     override suspend fun updateReceiptRemoteUrl(id: String, url: String?) {
