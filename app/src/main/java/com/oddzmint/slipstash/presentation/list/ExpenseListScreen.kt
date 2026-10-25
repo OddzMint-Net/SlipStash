@@ -215,20 +215,22 @@ private fun sampleExpenses(): List<Expense> {
     val now = System.currentTimeMillis()
     val day = 24L * 60 * 60 * 1000
     return listOf(
-        Expense(amountCents = 556_200, category = Category.GROCERIES, dateMillis = now, syncStatus = SyncStatus.PENDING),
-        Expense(amountCents = 250_000, category = Category.TRANSPORT, note = "Petrol" ,dateMillis = now, syncStatus = SyncStatus.SYNCING),
+        Expense(amountCents = 556_200, category = Category.GROCERIES, dateMillis = now, syncStatus = SyncStatus.PENDING, isDeleted = false),
+        Expense(amountCents = 250_000, category = Category.TRANSPORT, note = "Petrol" ,dateMillis = now, syncStatus = SyncStatus.SYNCING, isDeleted = false),
         Expense(
             amountCents = 79_900,
             category = Category.BILLS,
             note = "Internet",
             dateMillis = now - 2 * day,
-            syncStatus = SyncStatus.SYNCED
+            syncStatus = SyncStatus.SYNCED,
+            isDeleted = false
         ),
         Expense(
             amountCents = 921_500,
             category = Category.EATING_OUT,
             dateMillis = now - 3 * day,
-            syncStatus = SyncStatus.FAILED
+            syncStatus = SyncStatus.FAILED,
+            isDeleted = false
         )
     )
 }

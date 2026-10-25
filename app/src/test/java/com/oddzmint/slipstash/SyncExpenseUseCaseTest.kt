@@ -31,7 +31,8 @@ class SyncExpenseUseCaseTest {
             amountCents = 61_200,
             category = Category.GROCERIES,
             dateMillis = 0L,
-            syncStatus = SyncStatus.PENDING
+            syncStatus = SyncStatus.PENDING,
+            isDeleted = false
         )
     }
 

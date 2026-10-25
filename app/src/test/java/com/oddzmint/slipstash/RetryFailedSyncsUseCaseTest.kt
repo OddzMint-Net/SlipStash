@@ -35,7 +35,8 @@ class RetryFailedSyncsUseCaseTest {
         receiptLocalPath = localPath,
         receiptRemoteUrl = removeUrl,
         dateMillis = 0L,
-        syncStatus = status
+        syncStatus = status,
+        isDeleted = false
     )
 
     @Test

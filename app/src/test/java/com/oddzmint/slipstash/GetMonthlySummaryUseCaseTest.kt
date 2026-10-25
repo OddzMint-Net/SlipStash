@@ -28,7 +28,8 @@ class GetMonthlySummaryUseCaseTest {
         category = category,
         receiptLocalPath = receipt,
         dateMillis = date.atStartOfDay(zone).toInstant().toEpochMilli(),
-        syncStatus = status
+        syncStatus = status,
+        isDeleted = false
     )
 
     @Test

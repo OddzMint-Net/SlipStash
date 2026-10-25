@@ -28,7 +28,8 @@ class AddExpenseUseCase @Inject constructor(
             note = note.trim(),
             receiptLocalPath = receiptLocalPath,
             dateMillis = dateMillis,
-            syncStatus = SyncStatus.PENDING
+            syncStatus = SyncStatus.PENDING,
+            isDeleted = false
         )
         return runCatching {
             repository.saveExpense(expense)
