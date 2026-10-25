@@ -12,7 +12,7 @@ interface ExpenseDao {
     @Upsert
     suspend fun upsert(expense: ExpenseEntity)
 
-    @Query("SELECT * FROM expenses ORDER BY dateMillis DESC")
+    @Query("SELECT * FROM expenses WHERE isDeleted = 0 ORDER BY dateMillis DESC")
     fun observeAll(): Flow<List<ExpenseEntity>>
 
     @Query("SELECT * FROM expenses WHERE id = :id")
@@ -26,4 +26,10 @@ interface ExpenseDao {
 
     @Query("UPDATE expenses SET receiptRemoteUrl = :url WHERE id = :id")
     suspend fun updateReceiptRemoteUrl(id: String, url: String?)
+
+    @Query("UPDATE expenses SET isDeleted = 1, syncStatus = :status, updatedAtMillis = :updatedAt WHERE id = :id")
+    suspend fun markDeleted(id: String, status: SyncStatus, updatedAt: Long)
+
+    @Query("DELETE FROM expenses WHERE id = :id")
+    suspend fun deletedById(id: String)
 }

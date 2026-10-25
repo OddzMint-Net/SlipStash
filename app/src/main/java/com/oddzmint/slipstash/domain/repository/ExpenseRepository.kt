@@ -11,4 +11,6 @@ interface ExpenseRepository {
     suspend fun updateSyncStatus(id: String, status: SyncStatus)
     suspend fun getUnsyncedExpense(): List<Expense>
     suspend fun updateReceiptRemoteUrl(id: String, url: String?)
+    suspend fun markDeleted(id: String)
+    suspend fun purge(id: String)
 }

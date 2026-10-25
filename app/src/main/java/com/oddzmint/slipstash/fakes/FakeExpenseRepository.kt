@@ -35,4 +35,16 @@ class FakeExpenseRepository : ExpenseRepository {
             list.map { if (it.id == id) it.copy(receiptRemoteUrl = url) else it }
         }
     }
+
+    override suspend fun markDeleted(id: String) {
+        items.update { list ->
+            list.map {
+                if (it.id == id) it.copy(isDeleted = true, syncStatus = SyncStatus.PENDING) else it
+            }
+        }
+    }
+
+    override suspend fun purge(id: String) {
+        items.update { list -> list.filterNot { it.id == id } }
+    }
 }

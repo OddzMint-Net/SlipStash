@@ -10,7 +10,9 @@ fun Expense.toEntity() = ExpenseEntity(
     receiptLocalPath = receiptLocalPath,
     receiptRemoteUrl = receiptRemoteUrl,
     dateMillis = dateMillis,
-    syncStatus = syncStatus
+    syncStatus = syncStatus,
+    isDeleted = isDeleted,
+    updatedAtMillis = updatedAtMillis
 )
 
 fun ExpenseEntity.toDomain() = Expense(
@@ -21,5 +23,7 @@ fun ExpenseEntity.toDomain() = Expense(
     receiptLocalPath = receiptLocalPath,
     receiptRemoteUrl = receiptRemoteUrl,
     dateMillis = dateMillis,
-    syncStatus = syncStatus
+    syncStatus = syncStatus,
+    isDeleted = isDeleted,
+    updatedAtMillis = updatedAtMillis
 )

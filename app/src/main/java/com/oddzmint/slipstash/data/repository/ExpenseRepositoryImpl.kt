@@ -34,5 +34,7 @@ class ExpenseRepositoryImpl @Inject constructor(
     override suspend fun updateReceiptRemoteUrl(id: String, url: String?) =
         dao.updateReceiptRemoteUrl(id, url)
 
+    override suspend fun markDeleted(id: String) = dao.markDeleted(id, SyncStatus.PENDING, System.currentTimeMillis())
 
+    override suspend fun purge(id: String) = dao.deletedById(id)
 }
