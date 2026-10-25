@@ -102,7 +102,18 @@ class SyncExpenseUseCaseTest {
         val result = useCase()(expense.id)
 
         assertTrue(result.isFailure)
-        assertEquals(SyncStatus.FAILED,statusOf(expense.id))
+        assertEquals(SyncStatus.FAILED, statusOf(expense.id))
+    }
 
+    @Test
+    fun `syncing the same expense twice leaves exactly one remote document`() = runTest {
+        repository.saveExpense(expense)
+        val sync = useCase(FakeAuthRepository(userId = "user-36"))
+        sync(expense.id)
+        sync(expense.id)
+
+        assertEquals(2, remote.uploads.size) // the upload really ran twice
+        assertEquals(1, remote.documents.size) // but only one document exists
+        assertEquals(SyncStatus.SYNCED, statusOf(expense.id))
     }
 }
