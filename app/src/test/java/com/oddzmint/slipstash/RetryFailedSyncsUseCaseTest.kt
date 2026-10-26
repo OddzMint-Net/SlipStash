@@ -1,6 +1,5 @@
 package com.oddzmint.slipstash
 
-import com.oddzmint.slipstash.data.work.RetrySyncWorker
 import com.oddzmint.slipstash.domain.model.Category
 import com.oddzmint.slipstash.domain.model.Expense
 import com.oddzmint.slipstash.domain.model.SyncStatus
