@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">SlipStash</string>
+    <string name="expenses">Expenses</string>
+    <string name="add_expense">Add expense</string>
+    <string name="no_expenses_yet_Tap_to_add_one.">No expenses yet. Tap + to add one.</string>
+    <string name="this_month">This month</string>
+    <string name="internet">Internet</string>
+    <string name="summary">Summary</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
+    <string name="total_spent">Total spent</string>
+    <string name="by_category">By category</string>
+    <string name="view_queue">View queue</string>
+
 </resources>
