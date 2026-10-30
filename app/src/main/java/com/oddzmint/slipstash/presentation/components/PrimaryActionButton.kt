@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oddzmint.slipstash.R
 import com.oddzmint.slipstash.ui.theme.SlipStashTheme
 
 @Composable
@@ -53,7 +55,7 @@ fun PrimaryActionButton(
 private fun PrimaryActionButtonEnabledPreview() {
     SlipStashTheme {
         PrimaryActionButton(
-            text = "Save",
+            text = stringResource(R.string.save),
             onClick = {},
             enabled = true
         )
@@ -65,7 +67,7 @@ private fun PrimaryActionButtonEnabledPreview() {
 private fun PrimaryActionButtonDisabledPreview() {
     SlipStashTheme {
         PrimaryActionButton(
-            text = "Save",
+            text = stringResource(R.string.save),
             onClick = {},
             enabled = false
         )
@@ -77,7 +79,7 @@ private fun PrimaryActionButtonDisabledPreview() {
 private fun PrimaryActionButtonDarkPreview() {
     SlipStashTheme {
         PrimaryActionButton(
-            text = "Save",
+            text = stringResource(R.string.save),
             onClick = {},
             enabled = false
         )
