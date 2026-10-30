@@ -279,7 +279,7 @@ private fun Footer(summary: MonthlySummary, onViewQueue: () -> Unit) {
         ) {
             Text(
                 text = if (summary.waitingCount == 0) {
-                    "All synced"
+                    stringResource(R.string.all_synced)
                 } else {
                     "${summary.syncedCount} synced, ${summary.waitingCount} waiting"
                 },
