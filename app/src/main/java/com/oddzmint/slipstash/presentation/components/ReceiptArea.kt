@@ -22,8 +22,10 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oddzmint.slipstash.R
 import com.oddzmint.slipstash.ui.theme.SlipStashTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -58,9 +60,9 @@ fun ReceiptArea(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Attach receipt", style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.attach_receipt), style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    text = "Tap to take a photo",
+                    text = stringResource(R.string.tap_to_take_a_photo),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -76,8 +78,8 @@ fun ReceiptArea(
                     .clip(shape)
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TextButton(onClick = onTakePhoto) { Text("Retake") }
-                TextButton(onClick = onRemovePhoto) { Text("Remove") }
+                TextButton(onClick = onTakePhoto) { Text(stringResource(R.string.retake)) }
+                TextButton(onClick = onRemovePhoto) { Text(stringResource(R.string.remove)) }
             }
         }
     }
@@ -96,7 +98,7 @@ fun ReceiptPreview(path: String, modifier: Modifier = Modifier) {
     bitmap?.let {
         Image(
             bitmap = it,
-            contentDescription = "Receipt photo",
+            contentDescription = stringResource(R.string.receipt_photo),
             contentScale = ContentScale.Crop,
             modifier = modifier
         )

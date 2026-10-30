@@ -14,8 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oddzmint.slipstash.R
 import com.oddzmint.slipstash.domain.model.Category
 import com.oddzmint.slipstash.presentation.label
 import com.oddzmint.slipstash.ui.theme.SlipStashTheme
@@ -32,7 +34,7 @@ fun CategoryDropdown(
         onExpandedChange = { expanded = it }
     ) {
         AppTextField(
-            label = "Category",
+            label = stringResource(R.string.category),
             value = selected.label(),
             onValueChange = {},
             modifier = Modifier.menuAnchor(),
