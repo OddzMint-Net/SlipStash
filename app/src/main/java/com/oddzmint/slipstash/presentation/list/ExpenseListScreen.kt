@@ -167,10 +167,10 @@ private fun ExpenseRow(expense: Expense) {
 @Composable
 private fun StatusPill(status: SyncStatus) {
     val (color, label) = when (status) {
-        SyncStatus.PENDING -> Color(0xFFE0A100) to "Queued"
-        SyncStatus.SYNCING -> Color(0xFF4C9AFF) to "Syncing"
-        SyncStatus.SYNCED -> Color(0xFF3DBA5E) to "Synced"
-        SyncStatus.FAILED -> Color(0xFFE5645F) to "Retry"
+        SyncStatus.PENDING -> Color(0xFFE0A100) to stringResource(R.string.queued)
+        SyncStatus.SYNCING -> Color(0xFF4C9AFF) to stringResource(R.string.syncing)
+        SyncStatus.SYNCED -> Color(0xFF3DBA5E) to stringResource(R.string.synced)
+        SyncStatus.FAILED -> Color(0xFFE5645F) to stringResource(R.string.retry)
     }
     Surface(
         shape = RoundedCornerShape(8.dp),

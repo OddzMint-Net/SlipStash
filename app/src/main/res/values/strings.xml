@@ -19,4 +19,10 @@
     <string name="tap_to_take_a_photo">Tap to take a photo</string>
     <string name="attach_receipt">Attach receipt</string>
     <string name="category">Category</string>
+
+    <string name="all_synced">"All synced"</string>
+    <string name="retry">retry</string>
+    <string name="synced">Synced</string>
+    <string name="syncing">Syncing</string>
+    <string name="queued">Queued</string>
 </resources>
