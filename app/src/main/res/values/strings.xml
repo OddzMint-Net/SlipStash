@@ -12,4 +12,11 @@
     <string name="by_category">By category</string>
     <string name="view_queue">View queue</string>
 
+    <string name="save">Save</string>
+    <string name="retake">Retake</string>
+    <string name="remove">Remove</string>
+    <string name="receipt_photo">Receipt photo</string>
+    <string name="tap_to_take_a_photo">Tap to take a photo</string>
+    <string name="attach_receipt">Attach receipt</string>
+    <string name="category">Category</string>
 </resources>
