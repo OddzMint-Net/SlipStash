@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.oddzmint.slipstash.R
 import com.oddzmint.slipstash.domain.model.Category
 import com.oddzmint.slipstash.domain.model.CategoryTotal
 import com.oddzmint.slipstash.domain.model.MonthlySummary
@@ -84,7 +86,7 @@ fun SummaryContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Summary") },
+                title = { Text(stringResource(R.string.summary)) },
                 actions = {
                     MonthSwitcher(
                         month = summary.month,
@@ -130,7 +132,7 @@ private fun MonthSwitcher(
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = onPrevious, enabled = canGoPrevious) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous month")
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.previous_month))
         }
         Text(
             text = monthLabel(month),
@@ -138,7 +140,7 @@ private fun MonthSwitcher(
             fontWeight = FontWeight.Bold
         )
         IconButton(onClick = onNext, enabled = canGoNext) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next month")
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.next_month))
         }
     }
 }
@@ -155,7 +157,7 @@ private fun TotalCard(summary: MonthlySummary) {
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Total spent",
+                text = stringResource(R.string.total_spent),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -202,7 +204,7 @@ private fun StackedBar(categories: List<CategoryTotal>) {
 private fun CategorySection(summary: MonthlySummary) {
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Text(
-            text = "By category",
+            text = stringResource(R.string.by_category),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold
         )
@@ -285,7 +287,7 @@ private fun Footer(summary: MonthlySummary, onViewQueue: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             if (summary.waitingCount > 0) {
-                TextButton(onClick = onViewQueue) { Text("View queue") }
+                TextButton(onClick = onViewQueue) { Text(stringResource(R.string.view_queue)) }
             }
         }
     }
