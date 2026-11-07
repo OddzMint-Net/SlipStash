@@ -13,7 +13,8 @@ class RetryFailedSyncsUseCase @Inject constructor(
         val unsynced = repository.getUnsyncedExpense()
         unsynced.forEach { expense ->
             // Only run the compress/upload chain if there is a photo that hasn't been uploaded yet
-            val needsReceiptUpload = expense.receiptLocalPath != null && expense.receiptRemoteUrl == null
+            val needsReceiptUpload =
+                !expense.isDeleted && expense.receiptLocalPath != null && expense.receiptRemoteUrl == null
             scheduler.schedule(expense.id, hasReceipt = needsReceiptUpload)
         }
         return unsynced.size

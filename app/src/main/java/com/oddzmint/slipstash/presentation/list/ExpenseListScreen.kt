@@ -1,30 +1,45 @@
 package com.oddzmint.slipstash.presentation.list
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +54,10 @@ import com.oddzmint.slipstash.domain.model.Category
 import com.oddzmint.slipstash.domain.model.Expense
 import com.oddzmint.slipstash.domain.model.SyncStatus
 import com.oddzmint.slipstash.presentation.label
+import com.oddzmint.slipstash.presentation.navigation.Destination
+import com.oddzmint.slipstash.presentation.navigation.SlipStashBottomBar
 import com.oddzmint.slipstash.ui.theme.SlipStashTheme
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
@@ -55,7 +73,26 @@ fun ExpenseListScreen(
     viewModel: ExpenseListViewModel = hiltViewModel()
 ) {
     val expenses by viewModel.expenses.collectAsState()
-    ExpenseListContent(expenses = expenses, onAddClick = onAddClick)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    ExpenseListContent(
+        expenses = expenses,
+        onAddClick = onAddClick,
+        snackbarHostState = snackbarHostState,
+        onDelete = { expense ->
+            viewModel.requestDelete(expense.id)
+            scope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                val result = snackbarHostState.showSnackbar(
+                    message = "Expense deleted",
+                    actionLabel = "Undo",
+                    duration = SnackbarDuration.Short
+                )
+                if (result == SnackbarResult.ActionPerformed) viewModel.undoDelete(expense.id)
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,13 +100,16 @@ fun ExpenseListScreen(
 fun ExpenseListContent(
     expenses: List<Expense>,
     onAddClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onDelete: (Expense) -> Unit,
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val monthTotal = remember(expenses) { monthTotal(expenses) }
 
     Scaffold(
         modifier = modifier,
         topBar = { TopAppBar(title = { Text(stringResource(R.string.expenses)) }) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddClick) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_expense))
@@ -92,10 +132,58 @@ fun ExpenseListContent(
                 }
             } else {
                 items(expenses, key = { it.id }) { expense ->
-                    ExpenseRow(expense)
+                    SwipeToDeleteRow(expense = expense, onDelete = { onDelete(expense) })
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SwipeToDeleteRow(expense: Expense, onDelete: () -> Unit) {
+    val currentOnDelete by rememberUpdatedState(onDelete)
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                currentOnDelete()
+                true
+            } else {
+                false
+            }
+        }
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false,
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.errorContainer)
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Delete",
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+
+                    Spacer(Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+            }
+        }
+    ) {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+            ExpenseRow(expense)
         }
     }
 }
@@ -217,8 +305,21 @@ private fun sampleExpenses(): List<Expense> {
     val now = System.currentTimeMillis()
     val day = 24L * 60 * 60 * 1000
     return listOf(
-        Expense(amountCents = 556_200, category = Category.GROCERIES, dateMillis = now, syncStatus = SyncStatus.PENDING, isDeleted = false),
-        Expense(amountCents = 250_000, category = Category.TRANSPORT, note = "Petrol" ,dateMillis = now, syncStatus = SyncStatus.SYNCING, isDeleted = false),
+        Expense(
+            amountCents = 556_200,
+            category = Category.GROCERIES,
+            dateMillis = now,
+            syncStatus = SyncStatus.PENDING,
+            isDeleted = false
+        ),
+        Expense(
+            amountCents = 250_000,
+            category = Category.TRANSPORT,
+            note = "Petrol",
+            dateMillis = now,
+            syncStatus = SyncStatus.SYNCING,
+            isDeleted = false
+        ),
         Expense(
             amountCents = 79_900,
             category = Category.BILLS,
@@ -240,17 +341,52 @@ private fun sampleExpenses(): List<Expense> {
 @Preview(showBackground = true)
 @Composable
 private fun ExpenseListPreview() {
-    SlipStashTheme { ExpenseListContent(expenses = sampleExpenses(), onAddClick = {}) }
+    SlipStashTheme {
+        ExpenseListContent(
+            expenses = sampleExpenses(),
+            onAddClick = {},
+            onDelete = {},
+        )
+    }
 }
 
 @Preview(showBackground = true, name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ExpenseListDarkThemePreview() {
-    SlipStashTheme { ExpenseListContent(expenses = sampleExpenses(), onAddClick = {}) }
+    SlipStashTheme {
+        ExpenseListContent(
+            expenses = sampleExpenses(),
+            onAddClick = {},
+            onDelete = {})
+    }
 }
 
 @Preview(showBackground = true, name = "Empty")
 @Composable
 private fun ExpenseListEmptyPreview() {
-    SlipStashTheme { ExpenseListContent(expenses = emptyList(), onAddClick = {}) }
+    SlipStashTheme {
+        ExpenseListContent(
+            expenses = emptyList(),
+            onAddClick = {},
+            onDelete = {})
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "With bottom bar")
+@Composable
+private fun ExpenseListWithBarPreview() {
+    SlipStashTheme {
+        Scaffold(
+            bottomBar = {
+                SlipStashBottomBar(currentRoute = Destination.Expenses.route, onTabSelected = {})
+            }
+        ) { padding ->
+            ExpenseListContent(
+                expenses = sampleExpenses(),
+                onAddClick = {},
+                onDelete = {},
+                modifier = Modifier.padding(padding)
+            )
+        }
+    }
 }

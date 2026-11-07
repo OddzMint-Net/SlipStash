@@ -18,12 +18,19 @@ class SyncExpenseUseCase @Inject constructor(
         repository.updateSyncStatus(id, SyncStatus.SYNCING)
         return runCatching {
             val userId = auth.ensureSignedIn()
-            remote.upload(userId, expense)
+            if (expense.isDeleted) remote.delete(userId, id) else remote.upload(userId, expense)
         }.onSuccess {
-            repository.updateSyncStatus(id, SyncStatus.SYNCED)
+            if (expense.isDeleted) repository.purge(id) else markSynced(id)
+//            repository.updateSyncStatus(id, SyncStatus.SYNCED)
         }.onFailure { error ->
             if (error is CancellationException && error !is TimeoutCancellationException) throw error
             repository.updateSyncStatus(id, SyncStatus.FAILED)
         }
+    }
+
+    private suspend fun markSynced(id: String) {
+        //deleting while uploading
+        if (repository.getExpense(id)?.isDeleted == true) return
+        repository.updateSyncStatus(id, SyncStatus.SYNCED)
     }
 }

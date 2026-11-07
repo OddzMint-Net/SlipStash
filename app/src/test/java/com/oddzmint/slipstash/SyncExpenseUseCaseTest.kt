@@ -116,4 +116,53 @@ class SyncExpenseUseCaseTest {
         assertEquals(1, remote.documents.size) // but only one document exists
         assertEquals(SyncStatus.SYNCED, statusOf(expense.id))
     }
+
+    @Test
+    fun `deleted expense is removed remotely and purged locally`() = runTest {
+        val deleted = expense.copy(isDeleted = true)
+        repository.saveExpense(deleted)
+
+        val result = useCase(FakeAuthRepository(userId = "user-42"))(deleted.id)
+
+        assertTrue(result.isSuccess)
+        assertEquals(listOf(deleted.id), remote.deletes)
+        assertEquals(null, repository.getExpense(deleted.id))
+    }
+
+    @Test
+    fun `failed remote delete keeps the row deleted and marks it FAILED`() = runTest {
+        val deleted = expense.copy(isDeleted = true)
+        repository.saveExpense(deleted)
+        remote.onUpload = { throw RuntimeException("offline") }
+
+        val result = useCase()(deleted.id)
+        assertTrue(result.isFailure)
+        val row = repository.getExpense(deleted.id)!!
+        assertTrue(row.isDeleted)
+        assertEquals(SyncStatus.FAILED, row.syncStatus)
+    }
+
+    @Test
+    fun `syncing an already purged expense is a safe no-op`() = runTest {
+        val deleted = expense.copy(isDeleted = true)
+        repository.saveExpense(deleted)
+        val sync = useCase()
+
+        sync(deleted.id)
+        val second = sync(deleted.id)
+
+        assertTrue(second.isSuccess)
+        assertEquals(1, remote.deletes.size)
+    }
+
+    @Test
+    fun `expense deleted during upload is not marked SYNCED`() = runTest {
+        repository.saveExpense(expense)
+        remote.onUpload = { repository.markDeleted(expense.id) }
+
+        useCase()(expense.id)
+        val row = repository.getExpense(expense.id)!!
+        assertTrue(row.isDeleted)
+        assertEquals(SyncStatus.PENDING, row.syncStatus)
+    }
 }

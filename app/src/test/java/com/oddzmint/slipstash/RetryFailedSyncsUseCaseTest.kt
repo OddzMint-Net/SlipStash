@@ -88,7 +88,14 @@ class RetryFailedSyncsUseCaseTest {
         repository.saveExpense(stuck)
         retryFailedSyncs()
         assertEquals(listOf(stuck.id), scheduler.calls.map { it.expenseId })
+    }
 
+    @Test
+    fun `deleted expense never requests the receipt chain`() = runTest {
+        val deleted = expense(SyncStatus.PENDING, localPath = "/files/a.jpg").copy(isDeleted = true)
+        repository.saveExpense(deleted)
 
+        retryFailedSyncs()
+        assertEquals(false,scheduler.calls.single().hasReceipt)
     }
 }

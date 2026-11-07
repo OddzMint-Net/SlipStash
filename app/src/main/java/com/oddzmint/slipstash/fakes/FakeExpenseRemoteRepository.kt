@@ -8,6 +8,7 @@ class FakeExpenseRemoteRepository : ExpenseRemoteRepository {
     data class Upload(val userId: String, val expense: Expense)
 
     val uploads = mutableListOf<Upload>()
+    val deletes = mutableListOf<String>()
 
     val documents = mutableMapOf<String, Expense>()
     var onUpload: suspend () -> Unit = {}
@@ -16,5 +17,12 @@ class FakeExpenseRemoteRepository : ExpenseRemoteRepository {
         onUpload()
         uploads += Upload(userId, expense)
         documents["$userId/${expense.id}"] = expense
+    }
+
+    override suspend fun delete(userId: String, expenseId: String) {
+        onUpload()
+        deletes += expenseId
+        documents.remove("$userId/$expenseId")
+
     }
 }
