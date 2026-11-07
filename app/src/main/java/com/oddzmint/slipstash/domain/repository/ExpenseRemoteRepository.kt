@@ -4,4 +4,5 @@ import com.oddzmint.slipstash.domain.model.Expense
 
 interface ExpenseRemoteRepository {
     suspend fun upload(userId: String, expense: Expense)
+    suspend fun delete(userId: String, expenseId: String)
 }

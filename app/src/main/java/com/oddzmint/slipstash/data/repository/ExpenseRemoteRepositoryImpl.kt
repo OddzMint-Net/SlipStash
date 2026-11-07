@@ -21,11 +21,19 @@ class ExpenseRemoteRepositoryImpl @Inject constructor(
             "receiptUrl" to expense.receiptRemoteUrl,
             "dateMills" to expense.dateMillis
         )
-        withTimeout(20_000.milliseconds){
+        withTimeout(20_000.milliseconds) {
             firestore.collection("users").document(userId)
                 .collection("expenses").document(expense.id)
                 .set(data)
                 .await()
         }
+    }
+
+    override suspend fun delete(userId: String, expenseId: String) {
+        val user = firestore.collection("users").document(userId)
+        val batch = firestore.batch()
+        batch.delete(user.collection("expenses").document(expenseId))
+        batch.delete(user.collection("receipt").document(expenseId))
+        withTimeout(20_000.milliseconds) { batch.commit().await() }
     }
 }
