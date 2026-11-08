@@ -2,7 +2,9 @@ package com.oddzmint.slipstash.fakes
 
 import com.oddzmint.slipstash.domain.repository.SyncScheduler
 
-class FakeSyncScheduler : SyncScheduler {
+class FakeSyncScheduler(
+    val events: MutableList<String> = mutableListOf()
+) : SyncScheduler {
 
     data class Call(val expenseId: String, val hasReceipt: Boolean)
 
@@ -12,6 +14,12 @@ class FakeSyncScheduler : SyncScheduler {
         calls += Call(expenseId, hasReceipt)
     }
 
-    override fun schedulePeriodicRetry() = Unit
+    override fun schedulePeriodicRetry() {
+        events += "sweep"
+    }
+
+    override fun cancelAll() {
+        events += "cancelAll"
+    }
 
 }
