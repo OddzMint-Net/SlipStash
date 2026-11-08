@@ -67,4 +67,8 @@ class WorkManagerSyncScheduler @Inject constructor(
             request
         )
     }
+
+    override fun cancelAll() {
+        WorkManager.getInstance(context).cancelAllWork()
+    }
 }
