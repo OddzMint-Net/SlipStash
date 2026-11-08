@@ -151,7 +151,6 @@ fun AddExpenseContent(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun AddExpensePreview() {
