@@ -15,12 +15,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.oddzmint.slipstash.R
 import com.oddzmint.slipstash.domain.model.Category
 import com.oddzmint.slipstash.presentation.components.AppTextField
 import com.oddzmint.slipstash.presentation.components.CategoryDropdown
@@ -95,7 +97,7 @@ fun AddExpenseContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Add expense") },
+                title = { Text(stringResource(R.string.add_expense)) },
             )
         }
     ) { padding ->
@@ -113,7 +115,7 @@ fun AddExpenseContent(
             )
 
             AppTextField(
-                label = "Amount",
+                label = stringResource(R.string.amount),
                 value = state.amountText,
                 onValueChange = onAmountChange,
                 prefix = "R ",
@@ -128,18 +130,18 @@ fun AddExpenseContent(
             )
 
             AppTextField(
-                label = "Note (optional)",
+                label = stringResource(R.string.note_optional),
                 value = state.note,
                 onValueChange = onNoteChange
             )
 
             PrimaryActionButton(
-                text = "Save",
+                text = stringResource(R.string.save),
                 onClick = onSave
             )
 
             Text(
-                text = "Saved on device first, synced later",
+                text = stringResource(R.string.saved_on_device_first),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
