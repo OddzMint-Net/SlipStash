@@ -6,6 +6,7 @@ import com.oddzmint.slipstash.data.remote.AccountDataRepositoryImpl
 import com.oddzmint.slipstash.data.remote.FirestoreReceiptStorage
 import com.oddzmint.slipstash.data.repository.AuthRepositoryImpl
 import com.oddzmint.slipstash.data.repository.ExpenseRemoteRepositoryImpl
+import com.oddzmint.slipstash.domain.repository.AccountDataRepository
 import com.oddzmint.slipstash.domain.repository.AuthRepository
 import com.oddzmint.slipstash.domain.repository.ExpenseRemoteRepository
 import com.oddzmint.slipstash.domain.repository.ReceiptStorage
@@ -49,5 +50,5 @@ abstract class FirebaseBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindAccountDataRepository(impl: AccountDataRepositoryImpl)
+    abstract fun bindAccountDataRepository(impl: AccountDataRepositoryImpl): AccountDataRepository
 }
