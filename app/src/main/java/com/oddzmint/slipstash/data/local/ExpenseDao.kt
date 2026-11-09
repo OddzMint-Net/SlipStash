@@ -32,4 +32,7 @@ interface ExpenseDao {
 
     @Query("DELETE FROM expenses WHERE id = :id")
     suspend fun deletedById(id: String)
+
+    @Query("DELETE FROM expenses")
+    suspend fun deleteAll()
 }
