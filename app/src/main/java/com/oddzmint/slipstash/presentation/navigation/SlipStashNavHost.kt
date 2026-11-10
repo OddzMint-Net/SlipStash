@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.oddzmint.slipstash.presentation.add.AddExpenseScreen
 import com.oddzmint.slipstash.presentation.list.ExpenseListScreen
+import com.oddzmint.slipstash.presentation.settings.SettingsScreen
 import com.oddzmint.slipstash.presentation.summary.SummaryScreen
 
 @Composable
@@ -33,6 +34,10 @@ fun SlipStashNavHost(
 
         composable(Destination.AddExpense.route) {
             AddExpenseScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(Destination.Settings.route) {
+            SettingsScreen()
         }
     }
 }
