@@ -1,5 +1,6 @@
 package com.oddzmint.slipstash.presentation.settings
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,8 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.oddzmint.slipstash.ui.theme.SlipStashTheme
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
@@ -140,5 +143,55 @@ fun SettingsContent(
                 TextButton(onClick = { showDialog = false }) { Text("Cancel") }
             }
         )
+    }
+}
+
+@Preview(showBackground = true, name = "Idle")
+@Composable
+private fun SettingsPreview() {
+    SlipStashTheme {
+        SettingsContent(
+            SettingsUiState(), onDeleteConfirmed = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Deleting")
+@Composable
+private fun SettingsDeletingPreview() {
+    SlipStashTheme {
+        SettingsContent(
+            SettingsUiState(isDeleting = true), onDeleteConfirmed = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Error")
+@Composable
+private fun SettingsErrorPreview() {
+    SlipStashTheme {
+        SettingsContent(
+            SettingsUiState(
+                message = "Couldn't delete your data. Check your connection and try again. Nothing was removed from this phone.",
+                isError = true
+            ),
+            onDeleteConfirmed = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Done")
+@Composable
+private fun SettingsDonePreview() {
+    SlipStashTheme {
+        SettingsContent(SettingsUiState(message = "All your data has been deleted."), onDeleteConfirmed = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun SettingsDarkPreview() {
+    SlipStashTheme {
+        SettingsContent(SettingsUiState(), onDeleteConfirmed = {})
     }
 }
