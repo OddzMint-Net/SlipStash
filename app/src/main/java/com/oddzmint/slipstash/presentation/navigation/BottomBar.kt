@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.NavigationBar
@@ -26,7 +27,8 @@ import com.oddzmint.slipstash.ui.theme.SlipStashTheme
 
 internal enum class TopLevelTab(val destination: Destination, val label: String) {
     EXPENSES(Destination.Expenses, "Expenses"),
-    SUMMARY(Destination.Summary, "Summary")
+    SUMMARY(Destination.Summary, "Summary"),
+    SETTINGS(Destination.Settings, "Settings")
 }
 
 @Composable
@@ -52,6 +54,7 @@ private fun TabIcon(tab: TopLevelTab) {
     when (tab) {
         TopLevelTab.EXPENSES -> Icon(Icons.AutoMirrored.Filled.List, contentDescription = null)
         TopLevelTab.SUMMARY -> BarsIcon()
+        TopLevelTab.SETTINGS -> Icon(Icons.Default.Settings, contentDescription = null)
     }
 }
 
