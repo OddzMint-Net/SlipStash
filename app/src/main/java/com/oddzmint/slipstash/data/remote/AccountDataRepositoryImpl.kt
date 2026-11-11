@@ -28,7 +28,7 @@ class AccountDataRepositoryImpl @Inject constructor(
         val userDoc = firestore.collection("users").document(user.uid)
 
         deleteCollection(userDoc.collection("expenses"))
-        deleteCollection(userDoc.collection("receipt"))
+        deleteCollection(userDoc.collection("receipts"))
 
         runCatching { withTimeout(20_000) { user.delete().await() } }
             .onFailure { auth.signOut() }
@@ -38,7 +38,7 @@ class AccountDataRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             dao.deleteAll()
             File(context.filesDir, "receipts").deleteRecursively()
-            File(context.filesDir, "receipts compressed").deleteRecursively()
+            File(context.filesDir, "receipts_compressed").deleteRecursively()
         }
     }
 
