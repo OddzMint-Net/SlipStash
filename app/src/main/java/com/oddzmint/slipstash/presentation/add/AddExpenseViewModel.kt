@@ -46,7 +46,8 @@ class AddExpenseViewModel @Inject constructor(
             addExpense(
                 amountCents = cents,
                 category = current.category,
-                note = current.note
+                note = current.note,
+                receiptLocalPath = current.receiptPath
             )
                 .onSuccess { _state.update { it.copy(saved = true) } }
                 .onFailure { e -> _state.update { it.copy(error = e.message) } }

@@ -149,13 +149,13 @@ Run them with:
 ## 🚀 Getting started
 
 1. Create a project in the [Firebase console](https://console.firebase.google.com).
-2. Register an Android app with the package name `com.oddzmint.slipstash` and download `google-services.json` into the `app/` folder.
+2. Register an Android app with the package name `com.oddzmint.slipstash` and download `google-services.old.json` into the `app/` folder.
 3. Enable **Authentication → Sign-in method → Anonymous**.
 4. Create a **Firestore** database and publish the rules above.
 5. Make sure Gradle uses a full JDK 17 or newer (in IntelliJ: *Settings → Build Tools → Gradle → Gradle JDK*).
 6. Run the app on a device or emulator.
 
-> `google-services.json` is not included in this repository. The app needs your own file to build.
+> `google-services.old.json` is not included in this repository. The app needs your own file to build.
 
 ---
 
