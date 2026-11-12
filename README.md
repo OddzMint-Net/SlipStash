@@ -10,11 +10,11 @@ The project is built to demonstrate offline-first design, background work with W
 
 | Expenses Summary | Add expense | Receipt attached                      |
 |---|---|-------------------------------------------------------|
-| ![Expenses](screenshots/summary.jpg) | ![Add expense](screenshots/Add_Expense_Screen.png) | ![Receipt attached](screenshots/receipt_attached.jpg) |
+| ![Expenses](screenshots/summary_expense.jpg) | ![Add expense](screenshots/add_expense.jpg) | ![Receipt attached](screenshots/receipt_attached.jpg) |
 
-| Dark theme | Queued while offline                              | Synced in Firestore                              |
+| Dark theme | Queued while offline                              | delete synced in Firestore                              |
 |---|---------------------------------------------------|--------------------------------------------------|
-| ![Dark theme](screenshots/dark_theme.png) | ![Queued offline](screenshots/queued_offline.jpg) | ![Firestore](screenshots/synced.jpg) |
+| ![Dark theme](screenshots/dark_theme.png) | ![Queued offline](screenshots/queued_offline.jpg) | ![Firestore](screenshots/delete_expense.jpg) |
 
 ---
 
