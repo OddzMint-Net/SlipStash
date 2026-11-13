@@ -2,7 +2,7 @@
 
 SlipStash is an offline-first expense tracker for Android. You record an expense and an optional receipt photo, and it is saved on the phone instantly, even with no signal. A background job then syncs it to Firebase when a connection is available, retrying on its own if anything fails.
 
-The project is built to demonstrate offline-first design, background work with WorkManager, and Firebase integration, on a Clean Architecture foundation.
+The project is built to demonstrate offline-first design, idempotent background sync with WorkManager, Firebase integration, and privacy controls (deleting one expense or all your data from inside the app), on a Clean Architecture foundation.
 
 ---
 
@@ -22,12 +22,16 @@ The project is built to demonstrate offline-first design, background work with W
 
 - **Add an expense** with an amount, a category, an optional note, and an optional receipt photo.
 - **Works fully offline.** Everything is written to a local Room database first, so saving never waits for the network.
-- **Live sync status** on every expense: *Queued*, *Syncing*, *Synced* or *Retry*, driven by a status column in Room and observed through Kotlin Flow.
+- **Live sync status** on every expense: Queued, Syncing, Synced or Retry, driven by a status column in Room and observed through Kotlin Flow.
 - **Background sync with WorkManager.** Uploads wait for a network connection, retry with exponential backoff, and run even if the app is closed.
+- **Idempotent sync.** Retries, restarts and the periodic sweep can run the same work again without ever creating duplicates.
 - **Receipt pipeline.** A photo is compressed on the device, uploaded, and only then is the expense itself synced, using chained WorkManager jobs.
-- **Self-healing.** A periodic sweep re-queues anything left on *Retry* after its attempts ran out, or saved without a queued job.
+- **Monthly summary.** Total spent, a stacked bar and a per-category breakdown with percentages that always add up to 100, with a month switcher.
+- **Delete an expense.** Swipe it away, with a few seconds to undo. The delete is synced to the cloud, including the receipt.
+- **Delete all my data.** One button in Settings removes everything from the phone and from the cloud, including the anonymous account.
+- **Self-healing.** A periodic sweep re-queues anything left unsynced, or saved without a queued job.
 - **Anonymous sign-in** with Firebase Authentication, plus Firestore security rules so each user can only access their own data.
-- **Light and dark themes** (Material 3).
+- **Light and dark themes** (Material 3), bottom navigation and an adaptive app icon
 
 ---
 
